@@ -1,8 +1,10 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "vamshi-krishna-portfolio",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "Portfolio website of Vamshi Krishna Vilasagar - UI/UX Designer & Full Stack Developer",
+  "homepage": "https://vamshikrishna-portfolio.netlify.app",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
