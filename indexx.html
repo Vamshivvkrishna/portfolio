@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vamshi Krishna | Clinical SAS Programmer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f0d;
+    --bg2: #0f1712;
+    --green: #2ecc71;
+    --green-dim: #1a7a44;
+    --green-glow: rgba(46,204,113,0.15);
+    --white: #f0f5f2;
+    --muted: #6b8a77;
+    --border: rgba(46,204,113,0.2);
+    --card: rgba(15,23,18,0.8);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--green);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, opacity 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--green);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.18s ease, width 0.2s, height 0.2s, opacity 0.2s;
+    opacity: 0.5;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 4rem;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,15,13,0.7);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 3px;
+    color: var(--green);
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--green); }
+  .nav-badge {
+    background: var(--green);
+    color: var(--bg);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+    animation: pulse-badge 2s ease infinite;
+  }
+  @keyframes pulse-badge {
+    0%,100% { box-shadow: 0 0 0 0 rgba(46,204,113,0.5); }
+    50% { box-shadow: 0 0 0 8px rgba(46,204,113,0); }
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent);
+  }
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(46,204,113,0.12) 0%, transparent 70%);
+    top: 50%; left: 30%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+  }
+  .hero-left { position: relative; z-index: 2; }
+  .hero-eyebrow {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .hero-eyebrow span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .hero-line { width: 40px; height: 1px; background: var(--green); }
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 7vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+  }
+  .hero-name .accent { color: var(--green); }
+  .hero-title {
+    font-size: 1rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+  .hero-summary {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: #a0b8ac;
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+  }
+  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--green);
+    color: var(--bg);
+    border: none;
+    padding: 0.85rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: none;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(46,204,113,0.4); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--green);
+    border: 1px solid var(--green);
+    padding: 0.85rem 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: none;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, color 0.2s;
+  }
+  .btn-secondary:hover { background: var(--green); color: var(--bg); }
+
+  .hero-right {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .hero-photo-wrap {
+    position: relative;
+    width: 320px; height: 380px;
+  }
+  .hero-photo-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, var(--green), transparent 60%);
+    clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%);
+    z-index: -1;
+  }
+  .hero-photo-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; right: -20px;
+    width: 100%; height: 100%;
+    border: 1px solid var(--border);
+    clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%);
+    z-index: -2;
+  }
+  .hero-photo {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%);
+    filter: grayscale(20%) contrast(1.05);
+  }
+  .hero-stats {
+    position: absolute;
+    bottom: -30px; left: -40px;
+    display: flex; flex-direction: column; gap: 0.8rem;
+  }
+  .stat-chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    padding: 0.6rem 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    white-space: nowrap;
+  }
+
+  /* SECTION BASE */
+  section { padding: 6rem 4rem; }
+  .section-label {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 3.5rem;
+  }
+  .section-label span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .section-label .num {
+    color: var(--green-dim);
+    font-size: 0.65rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    letter-spacing: 2px;
+    line-height: 1;
+    color: var(--white);
+  }
+
+  /* SKILLS */
+  #skills { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .skill-card {
+    background: var(--bg);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 0;
+    background: var(--green);
+    transition: height 0.3s;
+  }
+  .skill-card:hover { background: var(--bg2); }
+  .skill-card:hover::before { height: 100%; }
+  .skill-category {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .skill-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tag {
+    background: rgba(46,204,113,0.08);
+    border: 1px solid rgba(46,204,113,0.2);
+    color: #a0c8b0;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.7rem;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.5px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .tag:hover { background: var(--green); color: var(--bg); }
+
+  /* EXPERIENCE */
+  #experience { background: var(--bg); }
+  .exp-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .exp-sidebar { position: sticky; top: 8rem; }
+  .exp-title-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+  }
+  .exp-title-big .green { color: var(--green); }
+  .exp-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.8; }
+
+  .exp-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.5px;
+  }
+  .exp-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--green-glow), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .exp-card:hover::after { opacity: 1; }
+  .exp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem; }
+  .exp-role {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+  }
+  .exp-company {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--green);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+  .exp-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.8rem;
+    white-space: nowrap;
+  }
+  .exp-project {
+    background: rgba(46,204,113,0.07);
+    border-left: 3px solid var(--green);
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.8rem;
+    color: #a0c8b0;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+  .exp-metrics {
+    display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+  }
+  .metric {
+    text-align: center;
+  }
+  .metric-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--green);
+    letter-spacing: 2px;
+  }
+  .metric-lbl {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+  }
+  .exp-bullets { list-style: none; }
+  .exp-bullets li {
+    display: flex; gap: 0.8rem;
+    font-size: 0.83rem;
+    color: #a0b8ac;
+    line-height: 1.7;
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid rgba(46,204,113,0.07);
+  }
+  .exp-bullets li:last-child { border-bottom: none; margin-bottom: 0; }
+  .exp-bullets li::before {
+    content: '▸';
+    color: var(--green);
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .exp-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin: 1.2rem 0 0.6rem;
+  }
+
+  /* TECHNICAL SKILLS */
+  #technical { background: var(--bg2); }
+  .tech-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .tech-block {
+    background: var(--bg);
+    padding: 2rem;
+  }
+  .tech-block-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    color: var(--green);
+    margin-bottom: 0.3rem;
+  }
+  .tech-block-sub {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .tech-items { display: flex; flex-direction: column; gap: 0.5rem; }
+  .tech-item {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.8rem;
+    color: #a0b8ac;
+  }
+  .tech-item-name { font-family: 'DM Mono', monospace; font-size: 0.72rem; }
+  .tech-bar {
+    width: 120px; height: 3px;
+    background: rgba(46,204,113,0.15);
+    border-radius: 0;
+    overflow: hidden;
+  }
+  .tech-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+  .tech-fill.animated { transform: scaleX(1); }
+
+  /* EDUCATION */
+  #education { background: var(--bg); }
+  .edu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5px;
+    background: var(--border);
+  }
+  .edu-card {
+    background: var(--bg2);
+    padding: 2rem;
+    border: 1px solid transparent;
+    transition: border-color 0.3s;
+    position: relative;
+  }
+  .edu-card:hover { border-color: var(--green); }
+  .edu-degree {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.3rem;
+  }
+  .edu-school {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--green);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .edu-meta { display: flex; justify-content: space-between; }
+  .edu-year, .edu-grade {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+  .edu-grade { color: var(--green); font-weight: 500; }
+  .edu-rank {
+    position: absolute;
+    top: 1.5rem; right: 1.5rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: rgba(46,204,113,0.06);
+    letter-spacing: 2px;
+  }
+
+  /* CONTACT */
+  #contact {
+    background: var(--bg2);
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+  .contact-inner { max-width: 600px; margin: 0 auto; }
+  .contact-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 6vw, 5rem);
+    letter-spacing: 3px;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .contact-title .green { color: var(--green); }
+  .contact-sub {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+  }
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .contact-link {
+    display: flex; align-items: center; gap: 0.7rem;
+    text-decoration: none;
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    border: 1px solid var(--border);
+    padding: 0.8rem 1.5rem;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .contact-link:hover { border-color: var(--green); color: var(--green); background: var(--green-glow); }
+  .contact-link svg { width: 16px; height: 16px; }
+  .footer-line {
+    border-top: 1px solid var(--border);
+    padding-top: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  /* SCROLL ANIMATIONS */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--green-dim); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    #hero { grid-template-columns: 1fr; padding: 7rem 1.5rem 3rem; gap: 3rem; }
+    .hero-right { display: none; }
+    section { padding: 4rem 1.5rem; }
+    .exp-container { grid-template-columns: 1fr; }
+    .exp-sidebar { position: static; }
+    .tech-layout { grid-template-columns: 1fr; }
+  }
+
+  /* TICKER */
+  .ticker-wrap {
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 0.7rem 0;
+  }
+  .ticker {
+    display: flex;
+    gap: 4rem;
+    animation: ticker 20s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .ticker-item .dot { color: var(--green); margin-right: 0.5rem; }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">VVK</div>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#technical">Technical</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-badge">&#x25cf; Open to Work</div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="hero-line"></div>
+      <span>Clinical SAS Programmer</span>
+    </div>
+    <h1 class="hero-name">
+      VILASAGAR<br>
+      VAMSHI<br>
+      <span class="accent">KRISHNA</span>
+    </h1>
+    <p class="hero-title">CDISC · SDTM · ADaM · SAS · R</p>
+    <p class="hero-summary">
+      Entry-level Clinical SAS Programmer with hands-on internship experience in CDISC-compliant clinical data programming. Proficient in SDTM domain mapping, ADaM dataset development, and Pinnacle 21 validation. Experienced in Phase I oncology study programming.
+    </p>
+    <div class="hero-ctas">
+      <a href="#experience" class="btn-primary">View Experience</a>
+      <a href="#contact" class="btn-secondary">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-photo-wrap">
+      <img class="hero-photo" src="vamshikrishna.jpeg" alt="Vamshi Krishna">
+        <div class="stat-chip">219 Study Subjects</div>
+        <div class="stat-chip">8 Dose Cohorts</div>
+        <div class="stat-chip">Phase I Oncology</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item"><span class="dot">▸</span>SDTM IG Compliant</span>
+    <span class="ticker-item"><span class="dot">▸</span>ADaM Dataset Development</span>
+    <span class="ticker-item"><span class="dot">▸</span>Pinnacle 21 Validation</span>
+    <span class="ticker-item"><span class="dot">▸</span>Phase I Oncology</span>
+    <span class="ticker-item"><span class="dot">▸</span>SAS Macros</span>
+    <span class="ticker-item"><span class="dot">▸</span>PROC SQL</span>
+    <span class="ticker-item"><span class="dot">▸</span>R Programming</span>
+    <span class="ticker-item"><span class="dot">▸</span>ICH-GCP Guidelines</span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item"><span class="dot">▸</span>SDTM IG Compliant</span>
+    <span class="ticker-item"><span class="dot">▸</span>ADaM Dataset Development</span>
+    <span class="ticker-item"><span class="dot">▸</span>Pinnacle 21 Validation</span>
+    <span class="ticker-item"><span class="dot">▸</span>Phase I Oncology</span>
+    <span class="ticker-item"><span class="dot">▸</span>SAS Macros</span>
+    <span class="ticker-item"><span class="dot">▸</span>PROC SQL</span>
+    <span class="ticker-item"><span class="dot">▸</span>R Programming</span>
+    <span class="ticker-item"><span class="dot">▸</span>ICH-GCP Guidelines</span>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">
+    <span class="num">01 /</span>
+    <span>Core Competencies</span>
+  </div>
+  <h2 class="section-title" style="margin-bottom:2.5rem;">WHAT I<br><span style="color:var(--green);">BRING</span></h2>
+  <div class="skills-grid">
+    <div class="skill-card fade-up">
+      <div class="skill-category">Standards</div>
+      <h3>CDISC</h3>
+      <div class="skill-tags">
+        <span class="tag">SDTM IG</span>
+        <span class="tag">ADaM IG</span>
+        <span class="tag">CDISC Compliance</span>
+        <span class="tag">CRF Annotation</span>
+        <span class="tag">Define.xml</span>
+      </div>
+    </div>
+    <div class="skill-card fade-up">
+      <div class="skill-category">SDTM Domains</div>
+      <h3>Domains</h3>
+      <div class="skill-tags">
+        <span class="tag">DM</span>
+        <span class="tag">AE</span>
+        <span class="tag">DS</span>
+        <span class="tag">EX</span>
+        <span class="tag">CM</span>
+        <span class="tag">VS</span>
+        <span class="tag">LB</span>
+      </div>
+    </div>
+    <div class="skill-card fade-up">
+      <div class="skill-category">ADaM Datasets</div>
+      <h3>Analysis</h3>
+      <div class="skill-tags">
+        <span class="tag">ADSL</span>
+        <span class="tag">ADAE</span>
+        <span class="tag">TRTSDT</span>
+        <span class="tag">TRTEDT</span>
+        <span class="tag">ITTFL</span>
+        <span class="tag">SAFFL</span>
+        <span class="tag">BASE</span>
+      </div>
+    </div>
+    <div class="skill-card fade-up">
+      <div class="skill-category">Programming</div>
+      <h3>SAS & R</h3>
+      <div class="skill-tags">
+        <span class="tag">BASE SAS</span>
+        <span class="tag">Advanced SAS</span>
+        <span class="tag">SAS Macros</span>
+        <span class="tag">PROC SQL</span>
+        <span class="tag">ODS Reporting</span>
+        <span class="tag">tidyverse</span>
+        <span class="tag">ggplot2</span>
+      </div>
+    </div>
+    <div class="skill-card fade-up">
+      <div class="skill-category">Validation</div>
+      <h3>QC Tools</h3>
+      <div class="skill-tags">
+        <span class="tag">Pinnacle 21</span>
+        <span class="tag">PROC COMPARE</span>
+        <span class="tag">SAS Log Review</span>
+      </div>
+    </div>
+    <div class="skill-card fade-up">
+      <div class="skill-category">Clinical Knowledge</div>
+      <h3>Trial Design</h3>
+      <div class="skill-tags">
+        <span class="tag">Phase I Oncology</span>
+        <span class="tag">SAP</span>
+        <span class="tag">ICH-GCP</span>
+        <span class="tag">Dose Escalation</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="exp-container">
+    <div class="exp-sidebar fade-up">
+      <div class="section-label">
+        <span class="num">02 /</span>
+        <span>Experience</span>
+      </div>
+      <div class="exp-title-big">REAL<br>WORLD<br><span class="green">WORK</span></div>
+      <p class="exp-desc">Hands-on internship experience in CDISC-compliant clinical data programming for a Phase I oncology dose-escalation study.</p>
+    </div>
+    <div>
+      <div class="exp-card fade-up">
+        <div class="exp-header">
+          <div>
+            <div class="exp-role">Clinical SAS Programmer Intern</div>
+            <div class="exp-company">Aculore Statistics Pvt. Ltd. · Hyderabad</div>
+          </div>
+          <div class="exp-date">July 2025</div>
+        </div>
+        <div class="exp-project">
+          Phase I Open-Label Dose-Escalation Study of HKI-272 in HER2/neu-Positive Tumors
+        </div>
+        <div class="exp-metrics">
+          <div class="metric">
+            <div class="metric-val">219</div>
+            <div class="metric-lbl">Subjects</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">8</div>
+            <div class="metric-lbl">Dose Cohorts</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">500mg</div>
+            <div class="metric-lbl">Max MTD</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">28</div>
+            <div class="metric-lbl">Day Cycles</div>
+          </div>
+        </div>
+
+        <div class="exp-section-label">SDTM & ADaM Programming</div>
+        <ul class="exp-bullets">
+          <li>Developed and validated SDTM domains (DM, AE, DS, EX, CM, VS, LB) by performing CRF annotation and SDTM variable mapping per CDISC SDTM IG</li>
+          <li>Built ADaM datasets ADSL and ADAE, deriving key analysis variables including TRTSDT, TRTEDT, ITTFL, SAFFL, and BASE</li>
+          <li>Performed SDTM-to-ADaM variable mapping, including day calculations and epoch derivations</li>
+          <li>Authored and reviewed dataset specification documents (specs) aligned with Study Analysis Plans (SAP)</li>
+        </ul>
+
+        <div class="exp-section-label">Data Validation & Quality</div>
+        <ul class="exp-bullets">
+          <li>Executed Pinnacle 21 (P21) validation on SDTM and ADaM datasets; reviewed and resolved CDISC compliance issues</li>
+          <li>Conducted PROC COMPARE-based QC to verify dataset accuracy and cross-checked outputs against SDTM IG</li>
+          <li>Performed systematic SAS log reviews to identify and address errors, warnings, and notes</li>
+        </ul>
+
+        <div class="exp-section-label">Clinical Reporting & Outputs</div>
+        <ul class="exp-bullets">
+          <li>Programmed Tables, Listings, and Figures (TLFs) using PROC REPORT, PROC PRINT, PROC FREQ, and PROC MEANS with ODS destination output</li>
+          <li>Generated Demographics (DM) and Disposition (DS) summary tables per SAP specifications</li>
+          <li>Processed and transformed raw clinical trial datasets using DATA step, SAS Macros, and PROC SQL</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECHNICAL SKILLS -->
+<section id="technical">
+  <div class="section-label">
+    <span class="num">03 /</span>
+    <span>Technical Depth</span>
+  </div>
+  <h2 class="section-title" style="margin-bottom:2.5rem;">TECH<br><span style="color:var(--green);">STACK</span></h2>
+  <div class="tech-layout">
+    <div class="tech-block fade-up">
+      <div class="tech-block-title">BASE SAS</div>
+      <div class="tech-block-sub">Core data programming & manipulation</div>
+      <div class="tech-items">
+        <div class="tech-item"><span class="tech-item-name">DATA Step Programming</span><div class="tech-bar"><div class="tech-fill" data-w="0.9"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">Dataset Merging & Subsetting</span><div class="tech-bar"><div class="tech-fill" data-w="0.85"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">SAS Date/Time Functions</span><div class="tech-bar"><div class="tech-fill" data-w="0.85"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">String Functions (SUBSTR, SCAN, COMPRESS)</span><div class="tech-bar"><div class="tech-fill" data-w="0.8"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">Date Imputation Logic</span><div class="tech-bar"><div class="tech-fill" data-w="0.8"></div></div></div>
+      </div>
+    </div>
+    <div class="tech-block fade-up">
+      <div class="tech-block-title">Advanced SAS</div>
+      <div class="tech-block-sub">Macros, SQL & complex transformations</div>
+      <div class="tech-items">
+        <div class="tech-item"><span class="tech-item-name">Parameterized SAS Macros</span><div class="tech-bar"><div class="tech-fill" data-w="0.85"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">PROC SQL with Subqueries</span><div class="tech-bar"><div class="tech-fill" data-w="0.85"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">PROC TRANSPOSE & Array Loops</span><div class="tech-bar"><div class="tech-fill" data-w="0.8"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">ODS Reporting (REPORT, PRINT, FREQ)</span><div class="tech-bar"><div class="tech-fill" data-w="0.82"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">PROC COMPARE QC</span><div class="tech-bar"><div class="tech-fill" data-w="0.78"></div></div></div>
+      </div>
+    </div>
+    <div class="tech-block fade-up">
+      <div class="tech-block-title">R Programming</div>
+      <div class="tech-block-sub">tidyverse-driven data analysis</div>
+      <div class="tech-items">
+        <div class="tech-item"><span class="tech-item-name">dplyr & tidyr (data wrangling)</span><div class="tech-bar"><div class="tech-fill" data-w="0.78"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">lubridate (date-time handling)</span><div class="tech-bar"><div class="tech-fill" data-w="0.75"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">ggplot2 (visualization)</span><div class="tech-bar"><div class="tech-fill" data-w="0.7"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">CSV/Excel Import & Cleaning</span><div class="tech-bar"><div class="tech-fill" data-w="0.78"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">Descriptive Summary Reports</span><div class="tech-bar"><div class="tech-fill" data-w="0.72"></div></div></div>
+      </div>
+    </div>
+    <div class="tech-block fade-up">
+      <div class="tech-block-title">Tools & Validation</div>
+      <div class="tech-block-sub">Clinical programming environment</div>
+      <div class="tech-items">
+        <div class="tech-item"><span class="tech-item-name">SAS 9.4</span><div class="tech-bar"><div class="tech-fill" data-w="0.9"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">Pinnacle 21 (P21)</span><div class="tech-bar"><div class="tech-fill" data-w="0.85"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">RStudio</span><div class="tech-bar"><div class="tech-fill" data-w="0.75"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">Microsoft Excel</span><div class="tech-bar"><div class="tech-fill" data-w="0.8"></div></div></div>
+        <div class="tech-item"><span class="tech-item-name">Python (Basic)</span><div class="tech-bar"><div class="tech-fill" data-w="0.5"></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-label">
+    <span class="num">04 /</span>
+    <span>Education</span>
+  </div>
+  <h2 class="section-title" style="margin-bottom:2.5rem;">ACADEMIC<br><span style="color:var(--green);">BACKGROUND</span></h2>
+  <div class="edu-grid">
+    <div class="edu-card fade-up">
+      <div class="edu-rank">01</div>
+      <div class="edu-degree">B.E. Computer Science (CSE)</div>
+      <div class="edu-school">JNTUH</div>
+      <div class="edu-meta">
+        <span class="edu-year">2025</span>
+        <span class="edu-grade">70%</span>
+      </div>
+    </div>
+    <div class="edu-card fade-up">
+      <div class="edu-rank">02</div>
+      <div class="edu-degree">Intermediate — MPC</div>
+      <div class="edu-school">Alphores Junior College</div>
+      <div class="edu-meta">
+        <span class="edu-year">2021</span>
+        <span class="edu-grade">80%</span>
+      </div>
+    </div>
+    <div class="edu-card fade-up">
+      <div class="edu-rank">03</div>
+      <div class="edu-degree">SSC — 10th Grade</div>
+      <div class="edu-school">Goutham Model School</div>
+      <div class="edu-meta">
+        <span class="edu-year">2019</span>
+        <span class="edu-grade">85%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner fade-up">
+    <div class="section-label" style="justify-content:center;">
+      <span class="num">05 /</span>
+      <span>Contact</span>
+    </div>
+    <h2 class="contact-title">LET'S<br><span class="green">CONNECT</span></h2>
+    <p class="contact-sub">Open to clinical SAS programming opportunities. Reach out via email or connect on LinkedIn.</p>
+    <div class="contact-links">
+      <a href="mailto:vamshivvkkrishna@gmail.com" class="contact-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 8l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        vamshivvkkrishna@gmail.com
+      </a>
+      <a href="tel:+919347014487" class="contact-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+        </svg>
+        +91 93470 14487
+      </a>
+      <a href="https://linkedin.com/in/vamshi-krishna04" target="_blank" class="contact-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+          <circle cx="4" cy="4" r="2"/>
+        </svg>
+        linkedin.com/in/vamshi-krishna04
+      </a>
+      <a href="#" class="contact-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        Hyderabad, India
+      </a>
+    </div>
+    <div class="footer-line">
+      © 2025 Vilasagar Vamshi Krishna · Clinical SAS Programmer · Open to Work
+    </div>
+  </div>
+</section>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
+  (function animRing() {
+    rx += (mx - rx) * 0.14;
+    ry += (my - ry) * 0.14;
+    ring.style.left = rx+'px';
+    ring.style.top = ry+'px';
+    requestAnimationFrame(animRing);
+  })();
+  document.querySelectorAll('a, button, .tag, .skill-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.width='20px'; cursor.style.height='20px'; ring.style.width='54px'; ring.style.height='54px'; });
+    el.addEventListener('mouseleave', () => { cursor.style.width='12px'; cursor.style.height='12px'; ring.style.width='36px'; ring.style.height='36px'; });
+  });
+
+  // Scroll animations
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        // Animate skill bars
+        e.target.querySelectorAll('.tech-fill').forEach((bar, i) => {
+          setTimeout(() => {
+            bar.style.width = (parseFloat(bar.dataset.w) * 100) + '%';
+            bar.classList.add('animated');
+          }, i * 80);
+        });
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+  document.querySelectorAll('.tech-block').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
